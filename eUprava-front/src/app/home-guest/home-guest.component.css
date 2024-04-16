@@ -1,0 +1,96 @@
+@font-face {
+  font-family: 'Montserrat-Regular';
+  src: url('../../assets/fonts/Montserrat-Regular.ttf') format('truetype');
+  /* Add additional font weights and styles if needed */
+}
+
+@font-face {
+  font-family: 'Montserrat-Bold';
+  src: url('../../assets/fonts/Montserrat-Bold.ttf') format('truetype');
+  /* Add additional font weights and styles if needed */
+}
+
+html{
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+.topLayout{
+  height: 50px;
+  margin:0;
+  display: flex;
+  justify-content: space-between;
+  background-color: #00205b;
+}
+
+.headerLayout{
+  display: flex;
+  flex-direction: row;
+  height: 90px;
+  width: 100%;
+  border-bottom: lightgray solid 1px;
+}
+
+#logo-government{
+  height:100%;
+}
+
+.logo-text-container{
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+#logo-government-href{
+  padding: 8px;
+}
+
+#logo-text{
+  font-family: "Montserrat-Bold";
+  font-size: 28px;
+  font-stretch: condensed;
+  color: #00205b;
+  text-decoration: none;
+  font-weight: bolder;
+}
+
+.topLayout-list-container-left, .topLayout-list-container-right{
+  display: flex;
+  flex-direction: row;
+  width:fit-content;
+}
+
+#topLayout-list-left, #topLayout-list-right{
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+
+}
+
+#topLayout-list-left {
+  padding-left: 20px;
+}
+
+#topLayout-list-right {
+  padding-right: 20px;
+}
+
+.list-parameter{
+  color: white;
+  padding: 0 11px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: sans-serif;
+  font-size: 16px;
+}
+
+#list-parameter-1, #list-parameter-2, #settings-parameter{
+  border-right: 1px dotted lightgray;
+}
+
+#falling-menu-arrow{
+  font-size: 13px;
+
+}
+
