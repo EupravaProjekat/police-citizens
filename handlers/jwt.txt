@@ -1,0 +1,57 @@
+Ovo je template za jwt token treba impleemntirati u login i proveru u sve endpointe koji treba da budu role based
+fali samo da se doda da se pri pravljenu tokena upise korisnikov email i token za kasnije validiranje ko salje zahtev i
+korisnikova rola .
+
+
+PROVERA
+
+
+
+
+	tokenString := r.Header.Get("jwt")
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		// Don't forget to validate the alg is what you expect:
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+
+		// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
+		return []byte("SecretYouShouldHide"), nil
+	})
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if ok && token.Valid {
+		exp := claims["exp"].(float64)
+		if float64(time.Now().UTC().Unix()) < exp {
+			fmt.Println("upesan jwt")
+		}
+	} else {
+		err := errors.New("Jwt error: invalid")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+
+
+
+
+
+
+PRAVLJENJE
+
+
+
+	// Create a new token object, specifying signing method and the claims
+	// you would like it to contain.
+	ttl := 600 * time.Second
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["isu"] = jwt.NewNumericDate(time.Now())
+	claims["role"] = "admin"
+	claims["exp"] = time.Now().UTC().Add(ttl).Unix()
+	var sampleSecretKey = []byte("SecretYouShouldHide")
+	// Sign and get the complete encoded token as a string using the secret
+	tokenString, err := token.SignedString(sampleSecretKey)
+	if err != nil {
+		fmt.Println(err)
+	}
+	w.Header().Set("jwt", tokenString)
