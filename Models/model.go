@@ -50,6 +50,10 @@ var typeNames = [...]string{
 	"SELF-DEFENSE WEAPONRY",
 }
 
+type Response struct {
+	VehicleWanted bool `json:"vehicle_wanted"`
+}
+
 func (wt Type) String() string {
 	names := [...]string{"HANDGUN", "RIFLE", "CARBINE", "AXE", "LONG-BARRELED PISTOL", "PUMP-ACTION SHOTGUN", "BOW AND ARROW", "SELF-DEFENSE WEAPONRY"}
 	if wt < Handgun || wt > SelfDefenseWeaponry {
@@ -73,14 +77,9 @@ type Request struct {
 	Email        string `bson:"email,omitempty" json:"email,omitempty"`
 	Recorded     bool   `bson:"recorded,omitempty" json:"recorded,omitempty"`
 }
-
-//type Document struct {
-//	DocumentNumber int
-//	IssueDate      Date
-//	ExpirationDate Date
-//	Weapon         Weapon
-//	User           User
-//}
+type Vehicle struct {
+	Plates string `bson:"plates,omitempty" json:"plates,omitempty"`
+}
 
 type GetRequest struct {
 	Uuid string

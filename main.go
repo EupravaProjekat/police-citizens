@@ -45,6 +45,11 @@ func main() {
 	router.HandleFunc("/checkifuserexists", hh.CheckIfUserExists).Methods("GET")
 	router.HandleFunc("/getallrequests", hh.GetallRequests).Methods("GET")
 	router.HandleFunc("/weapon-request", hh.NewWeaponRequest).Methods("POST")
+	//plates
+	router.HandleFunc("/getallplateswanted", hh.GetAllPlatesWnated).Methods("GET")
+	router.HandleFunc("/newwantedplates", hh.NewWantedPlates).Methods("POST")
+	router.HandleFunc("/checkplateswanted", hh.CheckPlatesWanted).Methods("POST")
+
 	//router.HandleFunc("/check-avaibility", hhava.CheckAvaibility).Methods("POST")
 	//TODO @MIHAJLO trace back to error root :D
 

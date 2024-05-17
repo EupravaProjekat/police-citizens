@@ -108,6 +108,23 @@ func (ar *Repo) GetAllRequest() ([]*Models.Request, error) {
 
 	return allRequests, nil
 }
+
+func (ar *Repo) CheckPlatesWanted(plate Models.Vehicle) (bool, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	Collection := ar.getCollectionPlates()
+
+	filter := bson.D{{Key: "plates", Value: plate}}
+
+	// Check if the vehicle exists.
+	count, err := Collection.CountDocuments(ctx, filter)
+	if err != nil {
+		return false, fmt.Errorf("failed to execute query: %w", err)
+	}
+
+	return count > 0, nil
+}
 func (ar *Repo) GetByEmail(email string) (*Models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -122,6 +139,26 @@ func (ar *Repo) GetByEmail(email string) (*Models.User, error) {
 	}
 
 	return &acc, nil
+}
+
+func (ar *Repo) GetAllPlatesWnated() ([]*Models.Vehicle, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	Collection := ar.getCollectionPlates()
+
+	var vehicles []*Models.Vehicle
+	cursor, err := Collection.Find(ctx, bson.D{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Iterate through the cursor and decode each document into a Vehicle struct.
+	if err = cursor.All(context.TODO(), &vehicles); err != nil {
+		log.Fatal(err)
+	}
+
+	return vehicles, nil
 }
 
 func (ar *Repo) GetAll() ([]*Models.User, error) {
@@ -195,6 +232,19 @@ func (ar *Repo) NewUser(Request *Models.User) error {
 	ar.logger.Printf("Documents ID: %v\n", result.InsertedID)
 	return nil
 }
+func (ar *Repo) NewPlatesWanted(Request *Models.Vehicle) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	accCollection := ar.getCollectionPlates()
+
+	result, err := accCollection.InsertOne(ctx, &Request)
+	if err != nil {
+		return err
+	}
+	ar.logger.Printf("Documents ID: %v\n", result.InsertedID)
+	return nil
+}
 
 func (ar *Repo) NewRequest(Request *Models.Request, email string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -249,5 +299,10 @@ func (ar *Repo) DeleteByEmail(id string) error {
 func (ar *Repo) getCollection() *mongo.Collection {
 	accommodationDatabase := ar.cli.Database("mongoPolice")
 	accommodationCollection := accommodationDatabase.Collection("police")
+	return accommodationCollection
+}
+func (ar *Repo) getCollectionPlates() *mongo.Collection {
+	accommodationDatabase := ar.cli.Database("mongoPolice")
+	accommodationCollection := accommodationDatabase.Collection("plates")
 	return accommodationCollection
 }

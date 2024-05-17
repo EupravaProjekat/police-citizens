@@ -88,11 +88,11 @@ func DecodeBodyUser(r io.Reader) (*Models.User, error) {
 	return &rt, nil
 }
 
-func DecodeBodyAva4(r io.Reader) (*protosRes.ReservationRequest, error) {
+func DecodeBodyplates(r io.Reader) (*Models.Vehicle, error) {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()
 
-	var rt protosRes.ReservationRequest
+	var rt Models.Vehicle
 	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
 		return nil, err
 	}
