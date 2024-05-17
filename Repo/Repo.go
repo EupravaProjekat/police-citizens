@@ -115,8 +115,8 @@ func (ar *Repo) CheckPlatesWanted(plate Models.Vehicle) (bool, error) {
 
 	Collection := ar.getCollectionPlates()
 
-	filter := bson.D{{Key: "plates", Value: plate}}
-
+	filter := bson.D{{Key: "plates", Value: plate.Plates}}
+	fmt.Println(plate.Plates)
 	// Check if the vehicle exists.
 	count, err := Collection.CountDocuments(ctx, filter)
 	if err != nil {

@@ -1,13 +1,17 @@
 package handlers
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
 	"github.com/EupravaProjekat/police-citizens/Models"
 	"github.com/EupravaProjekat/police-citizens/Repo"
 	"github.com/google/uuid"
+	"io"
 	"log"
 	"mime"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -114,38 +118,33 @@ func (h *Borderhendler) NewWeaponRequest(w http.ResponseWriter, r *http.Request)
 	newUUID := uuid.New().String()
 	request.Uuid = newUUID
 
-	//userData := []byte(`{"plate":"` + res.Email + `"}`)
-	//
-	//apiUrl := "localhost:9199/checkRecords"
-	//request2, err2 := http.NewRequest("POST", apiUrl, bytes.NewBuffer(userData))
-	//request2.Header.Set("Content-Type", "application/json; charset=utf-8")
-	//request2.Header.Set("jwt", r.Header.Get("jwt"))
-	//request2.Header.Set("intern", r.Header.Get("police-service-secret-code"))
-	//
-	//// send the request
-	//client := &http.Client{}
-	//response, err2 := client.Do(request2)
-	//if err2 != nil {
-	//	fmt.Println(err2)
-	//}
-	//if response.StatusCode != http.StatusOK {
-	//	err := errors.New("internal server not responding")
-	//	http.Error(w, err.Error(), http.StatusInternalServerError)
-	//	return
-	//}
-	//responseBody, err2 := io.ReadAll(response.Body)
-	//if err2 != nil {
-	//	fmt.Println(err2)
-	//}
-	//
-	//formattedData := formatJSON(responseBody)
-	//b, err := strconv.ParseBool(formattedData)
-	//if err != nil {
-	//	fmt.Println("Error:", err)
-	//	return
-	//}
-	request.Recorded = false
-	//defer response.Body.Close()
+	userData := []byte(`{"jmbg":"` + res.JMBG + `"}`)
+
+	apiUrl := "http://localhost:9199/check-if-person-is-prosecuted"
+	request2, err2 := http.NewRequest("POST", apiUrl, bytes.NewBuffer(userData))
+	request2.Header.Set("Content-Type", "application/json; charset=utf-8")
+	request2.Header.Set("jwt", r.Header.Get("jwt"))
+	request2.Header.Set("intern", "police-service-secret-code")
+
+	// send the request
+	client := &http.Client{}
+	response, err2 := client.Do(request2)
+	if err2 != nil {
+		fmt.Println(err2)
+	}
+	responseBody, err2 := io.ReadAll(response.Body)
+	if err2 != nil {
+		fmt.Println(err2)
+	}
+
+	formattedData := formatJSON(responseBody)
+	b, err := strconv.ParseBool(formattedData)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	request.Recorded = b
+	defer response.Body.Close()
 	res.Requests = append(res.Requests, request)
 	err = h.repo.UpdateUser(*res)
 	if err != nil {
@@ -192,12 +191,8 @@ func (h *Borderhendler) GetallRequests(w http.ResponseWriter, r *http.Request) {
 }
 func (h *Borderhendler) CheckPlatesWanted(w http.ResponseWriter, r *http.Request) {
 
-	res := ValidateJwt(r, h.repo)
-	if res == nil {
-		err := errors.New("user doesnt exist")
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
+	_ = ValidateJwt2(r, h.repo)
+
 	if r.Header.Get("intern") != "border-service-secret-code" {
 		err := errors.New("you are not system user, incident will be reported")
 		http.Error(w, err.Error(), http.StatusForbidden)
