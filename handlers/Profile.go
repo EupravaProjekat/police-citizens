@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/EupravaProjekat/police-citizens/Models"
@@ -120,7 +121,7 @@ func (h *Borderhendler) NewWeaponRequest(w http.ResponseWriter, r *http.Request)
 
 	userData := []byte(`{"jmbg":"` + res.JMBG + `"}`)
 
-	apiUrl := "http://localhost:9199/check-if-person-is-prosecuted"
+	apiUrl := "http://prosecution-service:9199/check-if-person-is-prosecuted"
 	request2, err2 := http.NewRequest("POST", apiUrl, bytes.NewBuffer(userData))
 	request2.Header.Set("Content-Type", "application/json; charset=utf-8")
 	request2.Header.Set("jwt", r.Header.Get("jwt"))
@@ -137,13 +138,13 @@ func (h *Borderhendler) NewWeaponRequest(w http.ResponseWriter, r *http.Request)
 		fmt.Println(err2)
 	}
 
-	formattedData := formatJSON(responseBody)
-	b, err := strconv.ParseBool(formattedData)
+	var resp Models.Responsepros
+	err = json.Unmarshal(responseBody, &resp)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
-	request.Recorded = b
+	request.Recorded = strconv.FormatBool(resp.Prosecuted)
 	defer response.Body.Close()
 	res.Requests = append(res.Requests, request)
 	err = h.repo.UpdateUser(*res)

@@ -21,7 +21,7 @@ type User struct {
 }
 
 type Weapon struct {
-	WeaponType   Type   `bson:"weapontype,omitempty" json:"weapontype,omitempty"`
+	WeaponType   string `bson:"weapontype,omitempty" json:"weapontype,omitempty"`
 	SerialNumber int    `bson:"serialnumber,omitempty" json:"serialnumber,omitempty"`
 	Caliber      string `bson:"caliber,omitempty" json:"caliber,omitempty"`
 }
@@ -50,6 +50,9 @@ var typeNames = [...]string{
 	"SELF-DEFENSE WEAPONRY",
 }
 
+type Responsepros struct {
+	Prosecuted bool `json:"prosecuted"`
+}
 type Response struct {
 	VehicleWanted bool `json:"vehicle_wanted"`
 }
@@ -75,7 +78,7 @@ type Request struct {
 	RequestState string `bson:"requeststate,omitempty" json:"requeststate,omitempty"`
 	Weapon       Weapon `bson:"weapon,omitempty" json:"weapon,omitempty"`
 	Email        string `bson:"email,omitempty" json:"email,omitempty"`
-	Recorded     bool   `bson:"recorded,omitempty" json:"recorded,omitempty"`
+	Recorded     string `bson:"recorded,omitempty" json:"recorded,omitempty"`
 }
 type Vehicle struct {
 	Plates string `bson:"plates,omitempty" json:"plates,omitempty"`
