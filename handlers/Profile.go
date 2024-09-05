@@ -45,14 +45,9 @@ func (h *Borderhendler) CheckIfUserExists(w http.ResponseWriter, r *http.Request
 		return
 	}
 	re := res
-	response, err := h.repo.GetByEmail(re.Email)
+	_, err = h.repo.GetByEmail(re.Email)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
-		return
-	}
-	if re.Email != response.Email {
-		err := errors.New("authorization error")
-		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
 

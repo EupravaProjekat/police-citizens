@@ -2,6 +2,7 @@ package Repo
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/EupravaProjekat/police-citizens/Models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -136,6 +137,9 @@ func (ar *Repo) GetByEmail(email string) (*Models.User, error) {
 	if err != nil {
 		ar.logger.Println(err)
 		return nil, err
+	}
+	if acc.Email == "" || len(acc.Email) < 3 {
+		return nil, errors.New("invalid email")
 	}
 
 	return &acc, nil
